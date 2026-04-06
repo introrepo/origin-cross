@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مستقبل الـ Webhooks الخاص بي</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
+        .log-entry { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .method { font-weight: bold; color: #007bff; }
+        pre { background: #272822; color: #f8f8f2; padding: 10px; border-radius: 5px; overflow: auto; }
+        .time { color: #666; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <h1>الطلبات المستلمة (Live)</h1>
+    <div id="logs"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const logsDiv = document.getElementById('logs');
+
+        socket.on('new_webhook', (data) => {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <div><span class="method">[${data.method}]</span> - <span class="time">${data.time}</span></div>
+                <p><strong>البيانات (Body):</strong></p>
+                <pre>${JSON.stringify(data.body, null, 2)}</pre>
+                <p><strong>الهيدرز (Headers):</strong></p>
+                <pre>${JSON.stringify(data.headers, null, 2)}</pre>
+            `;
+            logsDiv.prepend(entry);
+        });
+    </script>
+</body>
+</html>
